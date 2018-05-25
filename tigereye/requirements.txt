@@ -1,0 +1,6 @@
+Flask
+Flask_script
+Flask_classy
+Flask_sqlalchemy
+pymysql
+gunicorn
