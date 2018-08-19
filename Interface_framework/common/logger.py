@@ -1,6 +1,7 @@
 # coding:utf-8
 import logging
 import time
+import datetime
 import os
 
 cur_path = os.path.dirname(os.path.realpath(__file__))  # log_path是存放日志的路径
@@ -19,19 +20,21 @@ class Log:
     def TimeStampToTime(self, timestamp):
         """格式化时间"""
         timeStruct = time.localtime(timestamp)
-        return str(time.strftime('%Y-%m-%d', timeStruct))
+        return time.strftime('%Y-%m-%d', timeStruct)
 
     def remove_logs(self):
         """到期删除日志文件"""
-        dir_list = ['logs', 'report'] # 要删除文件的目录名
+        dir_list = ['logs', 'report']  # 要删除文件的目录名
         for dir in dir_list:
-            dirPath = os.path.abspath(os.path.dirname(os.path.dirname(__file__))) + '\\' + dir # 拼接删除目录完整路径
-            file_list = os.listdir(dirPath) # 返回目录下的文件list
+            dirPath = os.path.abspath(os.path.dirname(os.path.dirname(__file__))) + '\\' + dir  # 拼接删除目录完整路径
+            file_list = os.listdir(dirPath)  # 返回目录下的文件list
             for i in file_list:
-                file_path = os.path.join(dirPath, i) # 拼接文件的完整路径
-                t = int(self.TimeStampToTime(os.path.getctime(file_path))[-2:]) # 取文件创建时间 天
-                now = int(self.TimeStampToTime(time.time())[-2:]) # 当前时间 天
-                if now - t > 6: # 判断删除日志文件
+                file_path = os.path.join(dirPath, i)  # 拼接文件的完整路径
+                t_list = self.TimeStampToTime(os.path.getctime(file_path)).split('-')
+                now_list = self.TimeStampToTime(time.time()).split('-')
+                t = datetime.datetime(int(t_list[0]), int(t_list[1]), int(t_list[2]))  # 将时间转换成datetime.datetime 类型
+                now = datetime.datetime(int(now_list[0]), int(now_list[1]), int(now_list[2]))
+                if (now - t).days > 6 or os.path.getsize(file_path) > 1048576:  # 时间大于6天，大小大于1m删除
                     os.remove(file_path)
 
     def __console(self, level, message):

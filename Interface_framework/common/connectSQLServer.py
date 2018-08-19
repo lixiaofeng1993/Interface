@@ -1,7 +1,6 @@
 import pymssql
 # from decimal import Decimal
-import time
-
+# import time
 from common.logger import Log
 from common import readConfig
 
